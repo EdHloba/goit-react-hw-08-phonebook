@@ -10,7 +10,7 @@ import { LogoutLoader } from "components/Loader";
 
 const LogoutButton = styled(Button)`
     background-color: #ffffff;
-    color: #1976d2;
+    color: #DE4800;
     border: 1px solid #ffffff;
     font-size: 10px;
     padding: 5px 6px;

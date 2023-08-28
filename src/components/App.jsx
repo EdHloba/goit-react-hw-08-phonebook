@@ -32,7 +32,7 @@ const theme = createTheme({
   },
   palette: {
         primary: {
-            main: '#1976d2',
+            main: '#DE4800',
         },
   },
   breakpoints: {

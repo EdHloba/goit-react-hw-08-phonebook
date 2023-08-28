@@ -65,7 +65,7 @@ const Home = () => {
           paddingTop: 10,
           paddingBottom: 10,
           textAlign: 'center',
-          minHeight: '70vh',
+          minHeight: '75vh',
         }}
       >
         <Typography
@@ -119,7 +119,7 @@ const Home = () => {
           endIcon={<KeyboardArrowRightIcon />}
           onClick={handleStart}
         >
-          Try write down
+          Right here
         </Button>
       </Box>
     </ThemeProvider>

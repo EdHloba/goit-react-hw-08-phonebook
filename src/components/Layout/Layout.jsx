@@ -9,7 +9,7 @@ import { Footer } from "components/Footer/Footer";
 const Layout = () => {
 
     return (
-        <Container maxWidth='md'>
+        <Container maxWidth='lg'>
             <Bar />
                 <Suspense fallback={null}>
                     <Outlet/>

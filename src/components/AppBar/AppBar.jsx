@@ -9,7 +9,7 @@ import { AuthNav } from 'components/AuthNav';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#FF5733',
+      main: '#DE4800',
     },
   },
 });
@@ -19,10 +19,10 @@ export const Bar = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box sx={{ flexGrow: 1 }}>
+      <Box >
         <AppBar position="static">
           <Toolbar component="nav">
-            <Navigation sx={{ flexGrow: 1 }}/>
+            <Navigation/>
             {isLoggedIn ? <UserMenu /> : <AuthNav />}
           </Toolbar>
         </AppBar>
