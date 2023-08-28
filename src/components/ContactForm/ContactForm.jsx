@@ -1,65 +1,90 @@
-import { FormStyled, Label, Input, Error, Button } from './ContactForm.styled';
-import { Formik, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectContacts } from 'redux/contacts/selectors';
+import { selectContacts, selectIsLoading } from 'redux/contacts/selectors';
 import { addContact } from 'redux/contacts/operations';
-import { Notify } from 'notiflix';
-
-const schema = Yup.object().shape({
-  name: Yup.string()
-    .required('Name is required')
-    .matches(
-      /^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$/,
-      'Invalid name'
-    ),
-  number: Yup.string()
-    .length(9)
-    .required('Phone number is required')
-    .matches(
-      /\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d/,
-      'Invalid number'
-    ),
-});
-
-const initialValues = {
-  name: '',
-  number: '',
-};
+import { toast } from 'react-hot-toast';
+import { Box, Button, Container, TextField } from '@mui/material';
+import { AddLoader } from 'components/Loader';
 
 export const ContactForm = () => {
   const dispatch = useDispatch();
   const contacts = useSelector(selectContacts);
+  const operation = useSelector(selectIsLoading);
 
-  const handleSubmit = (values, { resetForm }) => {
+  const handleSubmit = async e => {
+    e.preventDefault();
+
+    const form = e.currentTarget;
+    const name = form.elements.name.value;
+    const number = form.elements.number.value;
+
     const newName = contacts.some(
-      contact => contact.name.toLowerCase() === values.name.toLowerCase()
+      contact => contact.name.toLowerCase() === name.toLowerCase()
     );
     if (newName) {
-      Notify.failure(`${values.name} is already in contacts`);
+      toast.error(`${name} is already in contacts`);
       return;
     }
-    dispatch(addContact({ name: values.name, number: values.number }));
-    resetForm();
-    Notify.success(`${values.name} is added to contacts`);
+    if (name === '' || number === '') {
+      toast.error('Fields cannot be empty. Enter some data!');
+      return;
+    }
+    try {
+      await dispatch(addContact({ name: name, number: number })).unwrap();
+      toast.success(`${name} is added to contacts`);
+      form.reset();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
-    <Formik
-      initialValues={initialValues}
-      onSubmit={handleSubmit}
-      validationSchema={schema}
+    <Container
+      maxWidth="xs"
+      sx={{
+        p: 4,
+        mb: 4,
+        bgcolor: '#ffffff',
+        borderRadius: '10px',
+        boxShadow: 3,
+      }}
     >
-      <FormStyled autoComplete="off">
-        <Label htmlFor="name">Name</Label>
-        <Input type="text" name="name" placeholder="Jacob Mercer" />
-        <ErrorMessage component={Error} name="name" />
+      <Box
+        component="form"
+        autoComplete="off"
+        noValidate
+        onSubmit={handleSubmit}
+      >
+        <TextField
+          margin="normal"
+          required
+          fullWidth
+          id="name"
+          label="Name"
+          name="name"
+          size="small"
+        />
 
-        <Label htmlFor="number">Number</Label>
-        <Input type="tel" name="number" placeholder="787-78-78" maxLength="9" />
-        <ErrorMessage component={Error} name="number" />
-        <Button type="submit">Add contact</Button>
-      </FormStyled>
-    </Formik>
+        <TextField
+          margin="normal"
+          required
+          fullWidth
+          type="tel"
+          id="number"
+          label="Phone Number"
+          name="number"
+          size="small"
+        />
+
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          sx={{ mt: 2, mb: 2 }}
+          size="medium"
+        >
+          {operation === 'add' ? <AddLoader /> : <>Add contact</>}
+        </Button>
+      </Box>
+    </Container>
   );
 };

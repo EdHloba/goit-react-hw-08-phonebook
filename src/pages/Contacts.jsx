@@ -1,61 +1,71 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { selectError, selectIsLoading } from 'redux/contacts/selectors';
+import { selectError, selectIsLoading, selectVisibleContacts } from 'redux/contacts/selectors';
+import { MainLoader } from 'components/Loader';
+import { ContactForm } from 'components/ContactForm';
+import { Filter } from 'components/Filter';
+import { ContactList } from 'components/ContactList';
 import { useEffect } from 'react';
 import { fetchContacts } from 'redux/contacts/operations';
-
-import { Notify } from 'notiflix';
+import { Container, Typography } from '@mui/material';
 import { Helmet } from 'react-helmet';
-import { Loader } from 'components/Loader/Loader';
-import { ContactList } from 'components/ContactList/ContactList';
-import { Filter } from 'components/Filter/Filter';
-import { ContactForm } from 'components/ContactForm/ContactForm';
 
-const styles = {
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: 22,
-    color: 'var (--primary-text-color)',
 
-    paddingLeft: 10,
-  },
-  h1: {
-    textTransform: 'uppercase',
-    marginTop: 20,
-    marginBottom: 20,
-  },
-  h2: {
-    marginTop: 20,
-    marginBottom: 20,
-  },
-};
-
-export const Contacts = () => {
-  const dispatch = useDispatch();
-  const isLoading = useSelector(selectIsLoading);
+const Contacts = () => {
   const error = useSelector(selectError);
+  const visibleContacts = useSelector(selectVisibleContacts);
+  const dispatch = useDispatch();
+  const operation = useSelector(selectIsLoading);
 
   useEffect(() => {
     dispatch(fetchContacts());
   }, [dispatch]);
 
   return (
-    <>
+      <Container component='main'
+            maxWidth="md"
+            sx={{
+                marginTop: 3,
+                marginBottom: 3,
+                minHeight: '80vh',
+                textAlign: 'center',
+            }}>
       <Helmet>
-        <title>Your contacts</title>
+        <title>Contacts</title>
       </Helmet>
-      <div style={styles.container}>
-        {error &&
-          Notify.failure('Ooops!..Something went wrong. Try to reload page')}
-        <h1 style={styles.h1}>Phonebook</h1>
-        <ContactForm/>
-        <h2 style={styles.h2}>Contacts</h2>
-        <Filter/>
-        {isLoading && !error && <Loader/>}
-        <ContactList/>
-      </div>
-    </>
+          <Typography
+            sx={{ mb: 3 }}
+            variant="h1"
+            fontSize='44px'
+            fontWeight='700'
+            gutterBottom>
+            Phonebook
+        </Typography>
+
+          <ContactForm />
+
+          <Typography
+            sx={{ mb: 3 }}
+            variant="h2"
+            fontSize='34px'
+            fontWeight='500'
+            gutterBottom>
+            Contacts
+        </Typography>
+
+        <Filter />
+
+        {operation === 'fetch' && !error && <MainLoader />}
+        {visibleContacts.length === 0
+          ? (<Typography sx={{ my: 2 }}
+                fontSize='18px'
+                color='#212121'
+                fontWeight='700'
+                paragraph
+                align="center">There are no contacts yet</Typography>)
+          : (<ContactList />)}
+
+    </Container>
   );
 };
+
+export default Contacts;

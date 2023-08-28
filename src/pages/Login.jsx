@@ -1,13 +1,20 @@
+import '@fontsource/ubuntu/400.css';
+import '@fontsource/ubuntu/500.css';
+import '@fontsource/ubuntu/700.css';
+import { LoginForm } from "components/LoginForm/LoginForm";
 import { Helmet } from 'react-helmet';
-import { LoginForm } from 'components/LoginForm/LoginForm';
 
-export default function Login() {
-  return (
-    <div>
-      <Helmet>
-        <title>Login</title>
-      </Helmet>
-      <LoginForm />
-    </div>
-  );
-}
+
+const Login = () => {
+    return (
+        <>
+            <Helmet>
+                <title>Login</title>
+            </Helmet>
+            <LoginForm/>
+        </>
+        
+    );
+};
+
+export default Login;
